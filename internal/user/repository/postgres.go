@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/3tagger/echo-sample-arch/internal/user"
 )
@@ -17,7 +19,7 @@ func NewUserRepositoryPostgreSQL(db *sql.DB) *UserRepositoryPostgreSQL {
 	}
 }
 
-func (r *UserRepositoryPostgreSQL) GetAllUsers(ctx context.Context) ([]*user.User, error) {
+func (r *UserRepositoryPostgreSQL) GetAll(ctx context.Context) ([]*user.User, error) {
 	res := []*user.User{}
 	sql := `
 		SELECT
@@ -54,7 +56,7 @@ func (r *UserRepositoryPostgreSQL) GetAllUsers(ctx context.Context) ([]*user.Use
 	return res, nil
 }
 
-func (r *UserRepositoryPostgreSQL) GetOneUserById(ctx context.Context, userId int64) (*user.User, error) {
+func (r *UserRepositoryPostgreSQL) GetOneById(ctx context.Context, userId int64) (*user.User, error) {
 	res := &user.User{}
 	sql := `
 		SELECT
@@ -76,7 +78,7 @@ func (r *UserRepositoryPostgreSQL) GetOneUserById(ctx context.Context, userId in
 	return res, nil
 }
 
-func (r *UserRepositoryPostgreSQL) InsertOneUser(ctx context.Context, user user.User) (*user.User, error) {
+func (r *UserRepositoryPostgreSQL) InsertOne(ctx context.Context, user user.User) (*user.User, error) {
 	res := user
 	sql := `
 		INSERT INTO users
@@ -95,7 +97,43 @@ func (r *UserRepositoryPostgreSQL) InsertOneUser(ctx context.Context, user user.
 	return &res, nil
 }
 
-func (r *UserRepositoryPostgreSQL) DeleteOneUser(ctx context.Context, userId int64) error {
+func (r *UserRepositoryPostgreSQL) InsertMany(ctx context.Context, users []user.User) error {
+	if len(users) == 0 {
+		return nil
+	}
+
+	const numOfParamPerItem int = 3
+	var (
+		sb         strings.Builder
+		paramCount int = 1
+		paramStr   string
+	)
+	params := []interface{}{}
+
+	for _, u := range users {
+		sb.WriteString(fmt.Sprintf("($%d, $%d, $%d),", paramCount, paramCount+1, paramCount+2))
+		params = append(params, u.Name, u.Email, u.About)
+		paramCount += numOfParamPerItem
+	}
+
+	paramStr = strings.TrimSuffix(sb.String(), ",")
+
+	sql := fmt.Sprintf(`
+		INSERT INTO users
+			(name, email, about)
+		VALUES
+			%s
+	`, paramStr)
+
+	_, err := r.db.ExecContext(ctx, sql, params...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *UserRepositoryPostgreSQL) DeleteOne(ctx context.Context, userId int64) error {
 	sql := `
 		DELETE FROM 
 			users
@@ -111,7 +149,7 @@ func (r *UserRepositoryPostgreSQL) DeleteOneUser(ctx context.Context, userId int
 	return nil
 }
 
-func (r *UserRepositoryPostgreSQL) UpdateOneUserById(ctx context.Context, userId int64, user user.User) error {
+func (r *UserRepositoryPostgreSQL) UpdateOneById(ctx context.Context, userId int64, user user.User) error {
 	sql := `
 		UPDATE 
 			users
