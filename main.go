@@ -7,12 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const (
-	ServerHost = ""
-	ServerPort = "8080"
-)
-
 func main() {
+	cfg := LoadConfig()
 	// initializing echo server
 	e := echo.New()
 
@@ -20,10 +16,13 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	srvAddr := fmt.Sprintf("%s:%s", ServerHost, ServerPort)
+	srvCfg := cfg.Server
+	srvAddr := fmt.Sprintf("%s:%s", srvCfg.Host, srvCfg.Post)
 
 	e.Logger.Info("server running on %s", srvAddr)
 	if err := e.Start(srvAddr); err != nil {
 		e.Logger.Fatal("error running echo server: %s", err)
 	}
+
+	e.Logger.Info("server has been stopped")
 }
