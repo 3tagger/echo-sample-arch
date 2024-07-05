@@ -1,8 +1,8 @@
 package dto
 
 type HttpResponse struct {
-	Message string `json:"message,omitempty"`
-	Result  interface{}
+	Message string      `json:"message,omitempty"`
+	Result  interface{} `json:"result,omitempty"`
 }
 
 func GenericBadResponseResponse() *HttpResponse {
