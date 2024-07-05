@@ -28,5 +28,9 @@ go.work.sum
 # vscode specific files
 .vscode/
 
+# container data
+!containerdata/.gitkeep
+containerdata/*
+
 # config files
 .env
