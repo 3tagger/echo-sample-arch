@@ -33,7 +33,7 @@ func main() {
 	userUsecase := userusecase.NewUserUsecase(userRepository)
 	userhandler := userhandler.NewUserEchoHandler(userUsecase)
 
-	e.GET("/users/:user_id", func(c echo.Context) error {
+	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, dto.SimpleMessageResponse("hello world"))
 	})
 
