@@ -8,6 +8,10 @@
 *.so
 *.dylib
 
+# Generated file binaries
+!bin/.gitkeep
+bin/*
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -20,3 +24,13 @@
 # Go workspace file
 go.work
 go.work.sum
+
+# vscode specific files
+.vscode/
+
+# container data
+!containerdata/.gitkeep
+containerdata/*
+
+# config files
+.env
