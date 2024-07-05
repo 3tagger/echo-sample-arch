@@ -19,6 +19,13 @@ down:
 run:
 	go run ./cmd/server
 
+.PHONY: seed-user
+seed-user:
+	go run ./cmd/seeder -n=10 -entity=user
+
+.PHONY: seed
+seed: seed-user
+
 .PHONY: migrate-up
 migrate-up:
 	migrate -database "postgresql://$(POSTGRESQL_USERNAME):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):$(POSTGRESQL_PORT)/$(POSTGRESQL_DBNAME)?sslmode=disable" -verbose -path ./db/migrations/ up
