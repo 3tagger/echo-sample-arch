@@ -2,14 +2,26 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/3tagger/echo-sample-arch/internal/config"
+	"github.com/3tagger/echo-sample-arch/internal/database"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Unable to load config: %v\n", err)
+	}
+
+	db, err := database.InitPostgreSQL(cfg.Database.Primary)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+	defer db.Close()
+
 	// initializing echo server
 	e := echo.New()
 
