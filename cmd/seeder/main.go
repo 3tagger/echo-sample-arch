@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/3tagger/echo-sample-arch/internal/database"
@@ -53,8 +54,9 @@ func main() {
 		return
 	}
 
+	now := time.Now()
 	log.Println("running the seeder...")
 	seederExec.Run(ctx, n)
 
-	log.Println("seeding finished...")
+	log.Printf("seeding finished in %v...\n", time.Since(now))
 }
