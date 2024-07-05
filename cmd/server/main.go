@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	cfg := LoadConfig()
+	cfg := config.Load()
 	// initializing echo server
 	e := echo.New()
 

@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"log"
@@ -16,7 +16,7 @@ type ServerConfig struct {
 	Post string
 }
 
-func LoadConfig() Config {
+func Load() Config {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("error loading .env file")
