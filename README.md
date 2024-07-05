@@ -21,7 +21,7 @@ make up
 
 ### Run the Migration
 
-To run the migration
+To run the migration, install [Migrate](https://github.com/golang-migrate/migrate)
 ```
 make migrate-up
 ```
@@ -42,9 +42,20 @@ make run
 
 ## Dependencies
 
+I'm not writing all of these from scratch, big thanks to these great libraries and their contributors.
+
+### CLI/Executable Dependencies
+
 Dependencies to other projects, can be installed using [Brew](https://brew.sh/):
 
 - Install [Migrate](https://github.com/golang-migrate/migrate) for Go:
 ```
 brew install golang-migrate
 ```
+
+### Libraries
+
+- [echo](https://github.com/labstack/echo)
+- [pgx](https://github.com/jackc/pgx)
+- [godotenv](https://github.com/joho/godotenv)
+- [faker](https://github.com/go-faker/faker)
