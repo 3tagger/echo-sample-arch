@@ -1,4 +1,6 @@
-package main
+package user
+
+import "context"
 
 type User struct {
 	Id    int64
@@ -7,10 +9,10 @@ type User struct {
 	About string
 }
 
-type UserRepository interface {
-	GetAllUsers() ([]*User, error)
-	GetOneUserById() (*User, error)
-	InsertOneUser(user User) (*User, error)
-	DeleteOneUser(user User) error
-	UpdateOneUserById(userId int64, user User) error
+type Repository interface {
+	GetAllUsers(ctx context.Context) ([]*User, error)
+	GetOneUserById(ctx context.Context, userId int64) (*User, error)
+	InsertOneUser(ctx context.Context, user User) (*User, error)
+	DeleteOneUser(ctx context.Context, userId int64) error
+	UpdateOneUserById(ctx context.Context, userId int64, user User) error
 }
