@@ -8,6 +8,10 @@
 *.so
 *.dylib
 
+# Generated file binaries
+!bin/.gitkeep
+bin/*
+
 # Test binary, built with `go test -c`
 *.test
 
