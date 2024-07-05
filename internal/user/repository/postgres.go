@@ -21,7 +21,7 @@ func NewUserRepositoryPostgreSQL(db *sql.DB) *UserRepositoryPostgreSQL {
 
 func (r *UserRepositoryPostgreSQL) GetAll(ctx context.Context) ([]*user.User, error) {
 	res := []*user.User{}
-	sql := `
+	q := `
 		SELECT
 			u.user_id,
 			u.name,
@@ -31,7 +31,7 @@ func (r *UserRepositoryPostgreSQL) GetAll(ctx context.Context) ([]*user.User, er
 			users u
 	`
 
-	rows, err := r.db.QueryContext(ctx, sql)
+	rows, err := r.db.QueryContext(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (r *UserRepositoryPostgreSQL) GetAll(ctx context.Context) ([]*user.User, er
 
 func (r *UserRepositoryPostgreSQL) GetOneById(ctx context.Context, userId int64) (*user.User, error) {
 	res := &user.User{}
-	sql := `
+	q := `
 		SELECT
 			u.user_id,
 			u.name,
@@ -70,8 +70,11 @@ func (r *UserRepositoryPostgreSQL) GetOneById(ctx context.Context, userId int64)
 			u.user_id = $1
 	`
 
-	err := r.db.QueryRowContext(ctx, sql, userId).Scan(&res.Id, &res.Name, &res.Email, &res.About)
+	err := r.db.QueryRowContext(ctx, q, userId).Scan(&res.Id, &res.Name, &res.Email, &res.About)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -80,7 +83,7 @@ func (r *UserRepositoryPostgreSQL) GetOneById(ctx context.Context, userId int64)
 
 func (r *UserRepositoryPostgreSQL) InsertOne(ctx context.Context, user user.User) (*user.User, error) {
 	res := user
-	sql := `
+	q := `
 		INSERT INTO users
 			(name, email, about)
 		VALUES
@@ -89,7 +92,7 @@ func (r *UserRepositoryPostgreSQL) InsertOne(ctx context.Context, user user.User
 			user_id
 	`
 
-	err := r.db.QueryRowContext(ctx, sql, user.Name, user.Email, user.About).Scan(&res.Id)
+	err := r.db.QueryRowContext(ctx, q, user.Name, user.Email, user.About).Scan(&res.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -118,14 +121,14 @@ func (r *UserRepositoryPostgreSQL) InsertMany(ctx context.Context, users []user.
 
 	paramStr = strings.TrimSuffix(sb.String(), ",")
 
-	sql := fmt.Sprintf(`
+	q := fmt.Sprintf(`
 		INSERT INTO users
 			(name, email, about)
 		VALUES
 			%s
 	`, paramStr)
 
-	_, err := r.db.ExecContext(ctx, sql, params...)
+	_, err := r.db.ExecContext(ctx, q, params...)
 	if err != nil {
 		return err
 	}
@@ -134,14 +137,14 @@ func (r *UserRepositoryPostgreSQL) InsertMany(ctx context.Context, users []user.
 }
 
 func (r *UserRepositoryPostgreSQL) DeleteOne(ctx context.Context, userId int64) error {
-	sql := `
+	q := `
 		DELETE FROM 
 			users
 		WHERE
 			users.user_id = $1
 	`
 
-	_, err := r.db.ExecContext(ctx, sql, userId)
+	_, err := r.db.ExecContext(ctx, q, userId)
 	if err != nil {
 		return err
 	}
@@ -150,7 +153,7 @@ func (r *UserRepositoryPostgreSQL) DeleteOne(ctx context.Context, userId int64) 
 }
 
 func (r *UserRepositoryPostgreSQL) UpdateOneById(ctx context.Context, userId int64, user user.User) error {
-	sql := `
+	q := `
 		UPDATE 
 			users
 		SET
@@ -161,7 +164,7 @@ func (r *UserRepositoryPostgreSQL) UpdateOneById(ctx context.Context, userId int
 			user_id = $1
 	`
 
-	_, err := r.db.ExecContext(ctx, sql, userId, user.Name, user.Email, user.About)
+	_, err := r.db.ExecContext(ctx, q, userId, user.Name, user.Email, user.About)
 	if err != nil {
 		return err
 	}
