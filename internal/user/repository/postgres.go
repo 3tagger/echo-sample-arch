@@ -5,8 +5,6 @@ import (
 	"database/sql"
 
 	"github.com/3tagger/echo-sample-arch/internal/user"
-
-	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type UserRepositoryPostgreSQL struct {
