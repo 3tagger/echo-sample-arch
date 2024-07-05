@@ -7,6 +7,10 @@ import (
 
 	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/3tagger/echo-sample-arch/internal/database"
+	userhandler "github.com/3tagger/echo-sample-arch/internal/user/handler"
+	userrepository "github.com/3tagger/echo-sample-arch/internal/user/repository"
+	userusecase "github.com/3tagger/echo-sample-arch/internal/user/usecase"
+	"github.com/3tagger/echo-sample-arch/internal/util/dto"
 	"github.com/labstack/echo/v4"
 )
 
@@ -25,9 +29,15 @@ func main() {
 	// initializing echo server
 	e := echo.New()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	userRepository := userrepository.NewUserRepositoryPostgreSQL(db)
+	userUsecase := userusecase.NewUserUsecase(userRepository)
+	userhandler := userhandler.NewUserEchoHandler(userUsecase)
+
+	e.GET("/users/:user_id", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, dto.SimpleMessageResponse("hello world"))
 	})
+
+	e.GET("/users/:user_id", userhandler.GetOneUserById)
 
 	srvCfg := cfg.Server
 	srvAddr := fmt.Sprintf("%s:%s", srvCfg.Host, srvCfg.Post)
