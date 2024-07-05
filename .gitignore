@@ -23,3 +23,6 @@ go.work.sum
 
 # vscode specific files
 .vscode/
+
+# config files
+.env
