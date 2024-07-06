@@ -55,6 +55,8 @@ Dependencies to other projects, can be installed using [Brew](https://brew.sh/):
 brew install golang-migrate
 ```
 
+- Install [httpyac](https://httpyac.github.io/) VSCode extension for integrated HTTP call with VSCode. By adding this extension, you can run the `./request/*.http` files directly from your browser.
+
 ### Libraries
 
 - [echo](https://github.com/labstack/echo)

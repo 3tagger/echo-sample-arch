@@ -1,0 +1,22 @@
+@host=http://localhost
+@port=8080
+
+###
+# Get all users
+GET {{ host }}:{{ port }}/users HTTP/1.1
+
+###
+# Get one user by ID
+@userId = 11
+GET {{ host }}:{{ port }}/users/{{ userId }} HTTP/1.1
+
+###
+# Create one user
+POST {{ host }}:{{ port }}/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "bob",
+    "email": "hello@example.com",
+    "about": "This is an example user"
+}

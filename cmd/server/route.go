@@ -8,5 +8,7 @@ func RegisterRoutes(e *echo.Echo, handlers *Handlers) {
 
 	e.GET("/", siteHandler.Home)
 	e.GET("/site/demo-cancellation", siteHandler.DemoContextCancellation)
+	e.GET("/users", userHandler.GetAllUsers)
 	e.GET("/users/:user_id", userHandler.GetOneUserById)
+	e.POST("/users", userHandler.CreateOneUser)
 }
