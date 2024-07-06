@@ -1,0 +1,11 @@
+with-expecter: true
+filename: "mock_{{.InterfaceName}}.go"
+dir: "{{.InterfaceDir}}"
+# mockname: "Mock{{.InterfaceName}}"
+outpkg: "{{.PackageName}}"
+inpackage: True
+packages:
+  github.com/3tagger/echo-sample-arch/internal/user:
+    interfaces:
+      Usecase:
+      Repository:
