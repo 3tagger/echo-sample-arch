@@ -1,0 +1,13 @@
+@host=http://localhost
+@port=8080
+
+###
+# Index
+GET {{ host }}:{{ port }} HTTP/1.1
+
+###
+# Demo cancellation
+# This endpoint can be used to test whether the context cancellation is working
+# Also, this can be used to test graceful shutdown
+GET {{ host }}:{{ port }}/site/demo-cancellation HTTP/1.1
+
