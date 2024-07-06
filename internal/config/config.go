@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -24,8 +25,9 @@ type PostgreSQLConfig struct {
 }
 
 type ServerConfig struct {
-	Host string
-	Post string
+	Host        string
+	Post        string
+	GracePeriod int
 }
 
 func Load() (Config, error) {
@@ -34,17 +36,30 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
+	serverCfg, err := loadServerConfig()
+	if err != nil {
+		return Config{}, err
+	}
+
+	dbCfg := loadDatabaseConfig()
+
 	return Config{
-		Server:   loadServerConfig(),
-		Database: loadDatabaseConfig(),
+		Server:   serverCfg,
+		Database: dbCfg,
 	}, nil
 }
 
-func loadServerConfig() ServerConfig {
-	return ServerConfig{
-		Host: os.Getenv("SERVER_HOST"),
-		Post: os.Getenv("SERVER_PORT"),
+func loadServerConfig() (ServerConfig, error) {
+	num, err := strconv.ParseInt(os.Getenv("SERVER_GRACE_PERIOD"), 10, 32)
+	if err != nil {
+		return ServerConfig{}, err
 	}
+
+	return ServerConfig{
+		Host:        os.Getenv("SERVER_HOST"),
+		Post:        os.Getenv("SERVER_PORT"),
+		GracePeriod: int(num),
+	}, nil
 }
 
 func loadDatabaseConfig() DatabaseConfig {

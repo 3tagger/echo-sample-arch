@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	echolog "github.com/labstack/gommon/log"
 
@@ -34,9 +39,28 @@ func main() {
 	srvCfg := cfg.Server
 	srvAddr := fmt.Sprintf("%s:%s", srvCfg.Host, srvCfg.Post)
 
-	e.Logger.Infof("server running on %s", srvAddr)
-	if err := e.Start(srvAddr); err != nil {
-		e.Logger.Fatalf("error running echo server: %s", err)
+	sigCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	// start server
+	go func() {
+		e.Logger.Infof("server running on %s", srvAddr)
+		if err := e.Start(srvAddr); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatalf("error running echo server: %s", err)
+		}
+	}()
+
+	// waiting for os signals, such as SIGINT
+	<-sigCtx.Done()
+
+	gracePeriod := cfg.Server.GracePeriod
+
+	e.Logger.Infof("initiating graceful shutdown with duration of %d second(s)", gracePeriod)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(gracePeriod)*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatalf("cannot shutdown the echo server: %s", err)
 	}
 
 	e.Logger.Info("server has been stopped")
