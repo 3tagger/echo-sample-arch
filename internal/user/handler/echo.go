@@ -35,3 +35,14 @@ func (h *UserEchoHandler) GetOneUserById(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, dto.SimpleResponse(res))
 }
+
+func (h *UserEchoHandler) GetAllUsers(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	res, err := h.userUsecase.GetAll(ctx)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, dto.SimpleResponse(res))
+}

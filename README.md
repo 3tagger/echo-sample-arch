@@ -44,6 +44,8 @@ make run
 
 I'm not writing all of these from scratch, big thanks to these great libraries and their contributors.
 
+This project uses Go `v1.22.x`.
+
 ### CLI/Executable Dependencies
 
 Dependencies to other projects, can be installed using [Brew](https://brew.sh/):
@@ -59,3 +61,4 @@ brew install golang-migrate
 - [pgx](https://github.com/jackc/pgx)
 - [godotenv](https://github.com/joho/godotenv)
 - [faker](https://github.com/go-faker/faker)
+- [mockery](https://github.com/vektra/mockery)

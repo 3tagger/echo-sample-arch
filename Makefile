@@ -9,7 +9,7 @@ build:
 
 .PHONY: up
 up:
-	docker compose up
+	docker compose up -d
 
 .PHONY: down
 down:
@@ -33,3 +33,7 @@ migrate-up:
 .PHONY: migrate-down
 migrate-down:
 	migrate -database "postgresql://$(POSTGRESQL_USERNAME):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):$(POSTGRESQL_PORT)/$(POSTGRESQL_DBNAME)?sslmode=disable" -verbose -path ./db/migrations/ down
+
+.PHONY: mock
+mock:
+	mockery
