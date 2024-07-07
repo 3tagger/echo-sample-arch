@@ -7,13 +7,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
-
-	echolog "github.com/labstack/gommon/log"
 
 	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/3tagger/echo-sample-arch/internal/database"
-	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -29,12 +25,9 @@ func main() {
 	defer db.Close()
 
 	// initializing echo server
-	e := echo.New()
-	e.Logger.SetLevel(echolog.INFO)
+	e := initEcho()
 
-	handlers := initHandlers(db)
-
-	RegisterRoutes(e, handlers)
+	RegisterRoutes(e, initHandlers(db))
 
 	srvCfg := cfg.Server
 	srvAddr := fmt.Sprintf("%s:%s", srvCfg.Host, srvCfg.Post)
@@ -53,15 +46,5 @@ func main() {
 	// waiting for os signals, such as SIGINT
 	<-sigCtx.Done()
 
-	gracePeriod := cfg.Server.GracePeriod
-
-	e.Logger.Infof("initiating graceful shutdown with duration of %d second(s)", gracePeriod)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(gracePeriod)*time.Second)
-	defer cancel()
-
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatalf("cannot shutdown the echo server: %s", err)
-	}
-
-	e.Logger.Info("server has been stopped")
+	gracefulShutdown(e, cfg.Server.GracePeriod)
 }

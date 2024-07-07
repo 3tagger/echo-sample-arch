@@ -25,12 +25,12 @@ func (h *UserEchoHandler) GetOneUserById(c echo.Context) error {
 
 	err := c.Bind(&req)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.SimpleMessageResponse())
+		return err
 	}
 
 	res, err := h.userUsecase.GetOneById(ctx, req.Id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, dto.SimpleResponse(res))
@@ -42,18 +42,16 @@ func (h *UserEchoHandler) CreateOneUser(c echo.Context) error {
 
 	err := c.Bind(&req)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.SimpleMessageResponse())
+		return err
 	}
 
-	u := user.User{
+	cu, err := h.userUsecase.InsertOne(ctx, user.User{
 		Email: req.Email,
 		Name:  req.Name,
 		About: req.About,
-	}
-
-	cu, err := h.userUsecase.InsertOne(ctx, u)
+	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return err
 	}
 
 	res := userdto.EntityToCreateOneUserResponse(cu)
@@ -66,7 +64,7 @@ func (h *UserEchoHandler) GetAllUsers(c echo.Context) error {
 
 	res, err := h.userUsecase.GetAll(ctx)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, dto.SimpleResponse(res))

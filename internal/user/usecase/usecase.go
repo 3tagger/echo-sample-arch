@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/3tagger/echo-sample-arch/internal/apperror"
 	"github.com/3tagger/echo-sample-arch/internal/user"
 )
 
@@ -29,6 +30,9 @@ func (u *UserUsecase) GetOneById(ctx context.Context, userId int64) (*user.User,
 	res, err := u.userRepository.GetOneById(ctx, userId)
 	if err != nil {
 		return nil, err
+	}
+	if res == nil {
+		return nil, apperror.ErrUserWithIdNotFound(userId)
 	}
 
 	return res, nil

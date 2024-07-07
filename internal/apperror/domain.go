@@ -1,17 +1,17 @@
-package error
+package apperror
 
 import "fmt"
 
 type InformativeError struct {
-	Message string
+	message string
 }
 
 func (e InformativeError) Error() string {
-	return e.Message
+	return e.message
 }
 
 func ErrUserWithIdNotFound(userId int64) InformativeError {
 	return InformativeError{
-		Message: fmt.Sprintf("user with id %d not found", userId),
+		message: fmt.Sprintf("user with id %d not found", userId),
 	}
 }

@@ -100,6 +100,22 @@ func TestUserUsecase_GetOneById(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "repository does not return a user",
+			args: args{
+				userId: 1,
+			},
+			fields: fields{
+				userRepositoryMock: func(t testing.TB) user.Repository {
+					repoMock := user.NewMockRepository(t)
+					repoMock.On("GetOneById", mock.Anything, int64(1)).Return(nil, nil)
+
+					return repoMock
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
 			name: "no error, return a user",
 			args: args{
 				userId: 1,
