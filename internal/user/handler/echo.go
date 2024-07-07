@@ -6,16 +6,19 @@ import (
 	"github.com/3tagger/echo-sample-arch/internal/user"
 	userdto "github.com/3tagger/echo-sample-arch/internal/user/dto"
 	"github.com/3tagger/echo-sample-arch/internal/util/dto"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
 type UserEchoHandler struct {
 	userUsecase user.Usecase
+	validate    *validator.Validate
 }
 
-func NewUserEchoHandler(userUsecase user.Usecase) *UserEchoHandler {
+func NewUserEchoHandler(userUsecase user.Usecase, validate *validator.Validate) *UserEchoHandler {
 	return &UserEchoHandler{
 		userUsecase: userUsecase,
+		validate:    validate,
 	}
 }
 
@@ -28,7 +31,14 @@ func (h *UserEchoHandler) GetOneUserById(c echo.Context) error {
 		return err
 	}
 
-	res, err := h.userUsecase.GetOneById(ctx, req.Id)
+	err = h.validate.StructCtx(ctx, &req)
+	if err != nil {
+		return err
+	}
+
+	u := req.GetOneUserByIdRequestToEntity()
+
+	res, err := h.userUsecase.GetOneById(ctx, u.Id)
 	if err != nil {
 		return err
 	}
@@ -41,6 +51,11 @@ func (h *UserEchoHandler) CreateOneUser(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	err := c.Bind(&req)
+	if err != nil {
+		return err
+	}
+
+	err = h.validate.StructCtx(ctx, &req)
 	if err != nil {
 		return err
 	}

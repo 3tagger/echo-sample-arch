@@ -1,14 +1,23 @@
 package dto
 
-import "github.com/3tagger/echo-sample-arch/internal/user"
+import (
+	"strconv"
+
+	"github.com/3tagger/echo-sample-arch/internal/user"
+)
 
 type GetOneUserByIdRequest struct {
-	Id int64 `param:"user_id"`
+	Id string `param:"user_id" validate:"required,numeric"`
+}
+
+func (req *GetOneUserByIdRequest) GetOneUserByIdRequestToEntity() user.User {
+	id, _ := strconv.ParseInt(req.Id, 10, 64)
+	return user.User{Id: id}
 }
 
 type CreateOneUserRequest struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name  string `json:"name" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
 	About string `json:"about"`
 }
 

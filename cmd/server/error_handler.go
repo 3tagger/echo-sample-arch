@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/3tagger/echo-sample-arch/internal/apperror"
 	"github.com/3tagger/echo-sample-arch/internal/util/dto"
 	"github.com/labstack/echo/v4"
 )
@@ -13,16 +12,20 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	code := http.StatusInternalServerError
 
 	var (
-		infoErr apperror.InformativeError
-		msg     string
+		httpError *echo.HTTPError
+		msg       any
 	)
 
-	if errors.As(err, &infoErr) {
-		code = http.StatusBadRequest
-		msg = infoErr.Error()
+	if errors.As(err, &httpError) {
+		code = httpError.Code
+		msg = httpError.Message
 	} else {
-		msg = "Our server is encountering an error, please try again later."
+		msg = "We encountered error, please try again later."
 	}
 
-	c.JSON(code, dto.SimpleMessageResponse(msg))
+	if txtMsg, ok := msg.(string); ok {
+		c.JSON(code, dto.SimpleMessageResponse(txtMsg))
+	} else {
+		c.JSON(code, dto.SimpleResponse(msg, "Error"))
+	}
 }

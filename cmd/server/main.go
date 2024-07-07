@@ -10,6 +10,7 @@ import (
 
 	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/3tagger/echo-sample-arch/internal/database"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -24,10 +25,12 @@ func main() {
 	}
 	defer db.Close()
 
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
 	// initializing echo server
 	e := initEcho()
 
-	RegisterRoutes(e, initHandlers(db))
+	RegisterRoutes(e, initHandlers(db, validate))
 
 	srvCfg := cfg.Server
 	srvAddr := fmt.Sprintf("%s:%s", srvCfg.Host, srvCfg.Post)
