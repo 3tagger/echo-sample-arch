@@ -40,6 +40,13 @@ To run this project, simply run this from the root of the project:
 make run
 ```
 
+### Generate Documentation (Swagger)
+
+To generate the documentation for the API, run this:
+```
+make gen-doc
+```
+
 ## Dependencies
 
 I'm not writing all of these from scratch, big thanks to these great libraries and their contributors.
@@ -64,3 +71,5 @@ brew install golang-migrate
 - [godotenv](https://github.com/joho/godotenv)
 - [faker](https://github.com/go-faker/faker)
 - [mockery](https://github.com/vektra/mockery)
+- [swaggo](https://github.com/swaggo/swag)
+- [validator](https://github.com/go-playground/validator)
