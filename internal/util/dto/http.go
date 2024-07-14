@@ -1,7 +1,7 @@
 package dto
 
 type HttpResponse struct {
-	Message string      `json:"message,omitempty"`
+	Message string      `json:"message,omitempty" example:"ok"`
 	Result  interface{} `json:"result,omitempty"`
 }
 

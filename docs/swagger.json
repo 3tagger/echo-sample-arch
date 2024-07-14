@@ -1,0 +1,241 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Sample of simple web server built using Echo framework. You can visit the GitHub repository at https://github.com/3tagger/echo-sample-arch",
+        "title": "echo-sample-arch",
+        "contact": {},
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/users": {
+            "get": {
+                "description": "Get all users data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "operationId": "GetAllUsers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetAllUsersResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a user based on provided data. When the user is created, the response will return the newly generated user ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a user based on provided data",
+                "operationId": "CreateOneUser",
+                "parameters": [
+                    {
+                        "description": "The request should follow the CreateOneUserRequest model",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOneUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOneUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "description": "Retrieving a user by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get One User By ID",
+                "operationId": "GetOneUserById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetOneUserByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.CreateOneUserRequest": {
+            "description": "This request will create a user by providing user's data",
+            "type": "object",
+            "required": [
+                "email",
+                "name"
+            ],
+            "properties": {
+                "about": {
+                    "description": "Description about the user",
+                    "type": "string",
+                    "example": "He is one of the user"
+                },
+                "email": {
+                    "description": "Email of the user",
+                    "type": "string",
+                    "example": "bob@example.com"
+                },
+                "name": {
+                    "description": "Name of the user",
+                    "type": "string",
+                    "example": "Bob"
+                }
+            }
+        },
+        "dto.CreateOneUserResponse": {
+            "description": "This response will contain the created user data",
+            "type": "object",
+            "properties": {
+                "about": {
+                    "description": "Description about the user",
+                    "type": "string",
+                    "example": "He is one of the user"
+                },
+                "email": {
+                    "description": "Email of the user",
+                    "type": "string",
+                    "example": "bob@example.com"
+                },
+                "id": {
+                    "description": "ID of the user",
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "description": "Name of the user",
+                    "type": "string",
+                    "example": "Bob"
+                }
+            }
+        },
+        "dto.GetAllUsersResponse": {
+            "description": "This response contains all users information with id, name and about",
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.UserResponseEntry"
+                    }
+                }
+            }
+        },
+        "dto.GetOneUserByIdResponse": {
+            "description": "This response contains user's information with id, name and about",
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/dto.UserResponseEntry"
+                }
+            }
+        },
+        "dto.HttpResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "result": {}
+            }
+        },
+        "dto.UserResponseEntry": {
+            "type": "object",
+            "properties": {
+                "about": {
+                    "description": "Description about the user",
+                    "type": "string",
+                    "example": "He is one of the user"
+                },
+                "id": {
+                    "description": "ID of the user",
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "description": "Name of the user",
+                    "type": "string",
+                    "example": "Bob"
+                }
+            }
+        }
+    }
+}

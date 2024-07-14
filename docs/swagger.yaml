@@ -1,0 +1,169 @@
+definitions:
+  dto.CreateOneUserRequest:
+    description: This request will create a user by providing user's data
+    properties:
+      about:
+        description: Description about the user
+        example: He is one of the user
+        type: string
+      email:
+        description: Email of the user
+        example: bob@example.com
+        type: string
+      name:
+        description: Name of the user
+        example: Bob
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  dto.CreateOneUserResponse:
+    description: This response will contain the created user data
+    properties:
+      about:
+        description: Description about the user
+        example: He is one of the user
+        type: string
+      email:
+        description: Email of the user
+        example: bob@example.com
+        type: string
+      id:
+        description: ID of the user
+        example: 1
+        type: integer
+      name:
+        description: Name of the user
+        example: Bob
+        type: string
+    type: object
+  dto.GetAllUsersResponse:
+    description: This response contains all users information with id, name and about
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/dto.UserResponseEntry'
+        type: array
+    type: object
+  dto.GetOneUserByIdResponse:
+    description: This response contains user's information with id, name and about
+    properties:
+      user:
+        $ref: '#/definitions/dto.UserResponseEntry'
+    type: object
+  dto.HttpResponse:
+    properties:
+      message:
+        example: ok
+        type: string
+      result: {}
+    type: object
+  dto.UserResponseEntry:
+    properties:
+      about:
+        description: Description about the user
+        example: He is one of the user
+        type: string
+      id:
+        description: ID of the user
+        example: 1
+        type: integer
+      name:
+        description: Name of the user
+        example: Bob
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Sample of simple web server built using Echo framework. You can visit
+    the GitHub repository at https://github.com/3tagger/echo-sample-arch
+  title: echo-sample-arch
+  version: 0.1.0
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users data
+      operationId: GetAllUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetAllUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a user based on provided data. When the user is created,
+        the response will return the newly generated user ID.
+      operationId: CreateOneUser
+      parameters:
+      - description: The request should follow the CreateOneUserRequest model
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOneUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateOneUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+      summary: Create a user based on provided data
+      tags:
+      - users
+  /users/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieving a user by ID
+      operationId: GetOneUserById
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetOneUserByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.HttpResponse'
+      summary: Get One User By ID
+      tags:
+      - users
+swagger: "2.0"
