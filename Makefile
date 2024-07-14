@@ -37,3 +37,8 @@ migrate-down:
 .PHONY: mock
 mock:
 	mockery
+
+.PHONY: gen-doc
+gen-doc:
+	swag fmt
+	swag init -g ../cmd/server/main.go -o ./docs -d ./internal

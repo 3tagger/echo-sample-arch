@@ -8,10 +8,16 @@ import (
 	"os"
 	"os/signal"
 
+	_ "github.com/3tagger/echo-sample-arch/docs"
+
 	"github.com/3tagger/echo-sample-arch/internal/config"
 	"github.com/3tagger/echo-sample-arch/internal/database"
 	"github.com/go-playground/validator/v10"
 )
+
+//	@title			echo-sample-arch
+//	@version		0.1.0
+//	@description	Sample of simple web server built using Echo framework. You can visit the GitHub repository at https://github.com/3tagger/echo-sample-arch
 
 func main() {
 	cfg, err := config.Load()
