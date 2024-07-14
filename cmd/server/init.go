@@ -51,22 +51,26 @@ func initEcho() *echo.Echo {
 				return nil
 			}
 
-			code := http.StatusInternalServerError
-
 			var (
 				infoErr  apperror.InformativeError
 				validErr validator.ValidationErrors
-				msg      any
+				echoErr  *echo.HTTPError
 			)
+
+			resErr := &echo.HTTPError{
+				Code:     http.StatusInternalServerError,
+				Message:  "Our server is encountering an error, please try again later.",
+				Internal: v.Error,
+			}
 
 			j["error"] = v.Error.Error()
 
-			err := v.Error
-			if errors.As(err, &infoErr) {
-				code = http.StatusBadRequest
-				msg = infoErr.Error()
-			} else if errors.As(err, &validErr) {
-				code = http.StatusBadRequest
+			if errors.As(v.Error, &echoErr) {
+				resErr = echoErr
+			} else if errors.As(v.Error, &infoErr) {
+				resErr.Code = http.StatusBadRequest
+				resErr.Message = infoErr.Error()
+			} else if errors.As(v.Error, &validErr) {
 				vldErr := map[string]string{}
 				for _, err := range validErr {
 					switch err.Tag() {
@@ -90,25 +94,20 @@ func initEcho() *echo.Echo {
 					}
 				}
 
-				msg = vldErr
-			} else {
-				msg = "Our server is encountering an error, please try again later."
+				resErr.Code = http.StatusBadRequest
+				resErr.Message = vldErr
 			}
 
-			j["error_message"] = msg
-			j["status"] = code
+			j["error_message"] = resErr.Message
+			j["status"] = resErr.Code
 
-			if code/100 == 5 {
+			if resErr.Code/100 == 5 {
 				e.Logger.Errorj(j)
 			} else {
 				e.Logger.Warnj(j)
 			}
 
-			return &echo.HTTPError{
-				Code:     code,
-				Message:  msg,
-				Internal: err,
-			}
+			return resErr
 		},
 	}))
 
